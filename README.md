@@ -1,15 +1,15 @@
-# Aqib & Romaisa — Wedding Invitation
+# Wedding Invitation
 
 GitHub Pages-ready local version of the original T2 wedding invitation.
 
 ## Event
-- Groom: Aqib
-- Groom parents: Shabir Ahmad & Zaitoona
-- Bride: Romaisa
-- Bride parents: Ghulam Mohammad & Gulshan
-- Date: 22 September 2026
+- Groom Name
+- Groom parents Name
+- Bride Name
+- Bride parents name
+- Date: XX-XX-XXXX
 - Time: 2:00 PM
-- Venue: House No. 34, Nawab Bagh, Baghwanpora, Lal Bazar, Srinagar
+- Venue: House No. XX, XX XXX, town, pin
 
 ## Preserved from the original T2 implementation
 - Envelope/tassel opening interaction
