@@ -3351,21 +3351,117 @@ body[data-opening-loader="true"] .wed2-opening-loader-hint {
 }
 
 
-/* Final typography correction — match the original T2 reference typography. */
-body.wed2-use-great-vibes .wed2-ring-name,
-body.wed2-use-great-vibes .wed2-details-name {
-  font-family: 'Great Vibes', cursive !important;
-  font-style: normal;
-  font-weight: 400;
+/* =========================================================
+   Aqib & Romaisa — Wedding T2 overrides
+   ========================================================= */
+
+:root {
+  --wed2-font-script: 'Allura', cursive;
+  --wed2-font-heading: 'Playfair Display', serif;
+  --wed2-font-body: 'Cormorant Garamond', Georgia, serif;
+  --wed2-font-ui: 'Nunito', sans-serif;
 }
 
-.wed2-closing-ums {
-  display: inline-block;
-  margin-top: 0.18rem;
-  font-family: 'Nunito', sans-serif;
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: lowercase;
-  opacity: 0.9;
+html,
+body {
+  font-family: var(--wed2-font-body);
+}
+
+/* Reference-style script names */
+.wed2-ring-name,
+.wed2-details-name {
+  font-family: var(--wed2-font-script) !important;
+  font-weight: 400 !important;
+}
+
+/* Elegant serif headings */
+.wed2-section-title,
+.wed2-timeline-title,
+.wed2-details-label {
+  font-family: var(--wed2-font-heading) !important;
+}
+
+/* Main invitation/detail copy */
+.wed2-details-value,
+.wed2-address,
+.wed2-invitation-message,
+.wed2-quote-text,
+.wed2-details-parents-name,
+.wed2-details-parents-prefix {
+  font-family: var(--wed2-font-body) !important;
+}
+
+/* One timeline entry only */
+.wed2-timeline-item[data-slot="2"],
+.wed2-timeline-item[data-slot="3"],
+.wed2-timeline-item[data-slot="4"] {
+  display: none !important;
+}
+
+.wed2-timeline-title {
+  font-size: clamp(1.15rem, 4.2vw, 1.55rem) !important;
+  font-weight: 600 !important;
+}
+
+.wed2-timeline-time {
+  font-family: var(--wed2-font-body) !important;
+  font-size: clamp(1rem, 3.7vw, 1.2rem) !important;
+  line-height: 1.35 !important;
+  white-space: normal !important;
+}
+
+.wed2-timeline-card {
+  padding: 0.95rem 1.1rem !important;
+}
+
+/* Original red-gAndb hero couple asset */
+.wed2-hero-couple {
+  display: block !important;
+  position: absolute !important;
+  left: 0 !important;
+  bottom: -2.3vw !important;
+  width: min(88vw, 380px) !important;
+  max-height: 58vh !important;
+  height: auto !important;
+  object-fit: contain !important;
+  object-position: bottom left !important;
+  z-index: 9 !important;
+}
+
+/* Requested small line below "family & friends" */
+.wed2-closing {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+}
+
+.wed2-closing-heart {
+  display: block !important;
+  margin-top: 0.18rem !important;
+  font-family: var(--wed2-font-body) !important;
+  font-size: 0.62rem !important;
+  line-height: 1 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: lowercase !important;
+  opacity: 0.72;
+}
+
+/* Allura is the reference script for the couple names */
+body.wed2-ring-font-allura .wed2-ring-name {
+  font-family: 'Allura', cursive !important;
+  font-weight: 400 !important;
+}
+
+@media (max-width: 480px) {
+  .wed2-ring-name {
+    font-size: clamp(2.35rem, 12vw, 3.4rem) !important;
+  }
+
+  .wed2-timeline-time {
+    font-size: 0.98rem !important;
+  }
+
+  .wed2-closing-heart {
+    font-size: 0.58rem !important;
+  }
 }
