@@ -3,19 +3,13 @@
 ===================================================== */
 
 const openInvitation =
-    document.getElementById(
-        "openInvitation"
-    );
+    document.getElementById("openInvitation");
 
 const cover =
-    document.getElementById(
-        "cover"
-    );
+    document.getElementById("cover");
 
 const invitation =
-    document.getElementById(
-        "invitation"
-    );
+    document.getElementById("invitation");
 
 
 openInvitation.addEventListener(
@@ -45,11 +39,6 @@ openInvitation.addEventListener(
                 );
 
 
-                /*
-                    Try to start music.
-                    Browsers may block autoplay.
-                */
-
                 const music =
                     document.getElementById(
                         "weddingMusic"
@@ -74,8 +63,8 @@ openInvitation.addEventListener(
                         function () {
 
                             /*
-                                User can start it
-                                using the music button.
+                                Browser may block
+                                automatic playback.
                             */
 
                         }
@@ -157,12 +146,10 @@ musicButton.addEventListener(
 ===================================================== */
 
 /*
-    Wedding:
+    Wedding date:
+
     22 September 2026
     2:00 PM
-
-    The browser interprets this in the
-    visitor's local timezone.
 */
 
 const weddingDate =
@@ -349,7 +336,7 @@ setInterval(
 
 
 /* =====================================================
-   SCRATCH CARD
+   SCRATCH & REVEAL
 ===================================================== */
 
 const canvas =
@@ -363,21 +350,27 @@ const context =
     );
 
 const scratchCard =
-    document.querySelector(
-        ".scratch-card"
+    document.getElementById(
+        "scratchCard"
     );
 
 
 let scratching =
     false;
 
+let revealed =
+    false;
 
+
+
+/*
+    Create the scratch surface.
+*/
 
 function setupScratchCard() {
 
     const rect =
-        scratchCard
-            .getBoundingClientRect();
+        scratchCard.getBoundingClientRect();
 
 
     const scale =
@@ -386,13 +379,17 @@ function setupScratchCard() {
 
 
     canvas.width =
-        rect.width *
-        scale;
+        Math.round(
+            rect.width *
+            scale
+        );
 
 
     canvas.height =
-        rect.height *
-        scale;
+        Math.round(
+            rect.height *
+            scale
+        );
 
 
     canvas.style.width =
@@ -420,7 +417,7 @@ function setupScratchCard() {
 
 
     /*
-        Gold scratch surface
+        Main scratch surface
     */
 
     context.fillStyle =
@@ -436,7 +433,7 @@ function setupScratchCard() {
 
 
     /*
-        Subtle texture
+        Decorative texture
     */
 
     context.fillStyle =
@@ -445,7 +442,7 @@ function setupScratchCard() {
 
     for (
         let i = 0;
-        i < 250;
+        i < 350;
         i++
     ) {
 
@@ -453,6 +450,7 @@ function setupScratchCard() {
 
 
         context.arc(
+
             Math.random() *
                 rect.width,
 
@@ -463,6 +461,7 @@ function setupScratchCard() {
 
             0,
             Math.PI * 2
+
         );
 
 
@@ -472,7 +471,7 @@ function setupScratchCard() {
 
 
     /*
-        Instruction
+        Scratch instruction
     */
 
     context.fillStyle =
@@ -487,32 +486,115 @@ function setupScratchCard() {
         "center";
 
 
+    context.textBaseline =
+        "middle";
+
+
     context.fillText(
+
         "SCRATCH TO REVEAL",
+
         rect.width / 2,
+
         rect.height / 2
+
     );
 
 }
 
 
-
 setupScratchCard();
 
 
+
+/*
+    Recreate the scratch surface
+    if screen size changes.
+*/
+
 window.addEventListener(
     "resize",
-    setupScratchCard
+    function () {
+
+        if (
+            !revealed
+        ) {
+
+            setupScratchCard();
+
+        }
+
+    }
 );
 
 
+
+/*
+    Get pointer position.
+*/
+
+function getPointerPosition(
+    event
+) {
+
+    const rect =
+        canvas.getBoundingClientRect();
+
+
+    let clientX;
+
+    let clientY;
+
+
+    if (
+        event.touches &&
+        event.touches.length > 0
+    ) {
+
+        clientX =
+            event.touches[0].clientX;
+
+        clientY =
+            event.touches[0].clientY;
+
+    } else {
+
+        clientX =
+            event.clientX;
+
+        clientY =
+            event.clientY;
+
+    }
+
+
+    return {
+
+        x:
+            clientX -
+            rect.left,
+
+        y:
+            clientY -
+            rect.top
+
+    };
+
+}
+
+
+
+/*
+    Scratch the surface.
+*/
 
 function scratch(
     event
 ) {
 
     if (
-        !scratching
+        !scratching ||
+        revealed
     ) {
 
         return;
@@ -520,30 +602,10 @@ function scratch(
     }
 
 
-    const rect =
-        canvas.getBoundingClientRect();
-
-
-    const clientX =
-        event.touches
-            ? event.touches[0].clientX
-            : event.clientX;
-
-
-    const clientY =
-        event.touches
-            ? event.touches[0].clientY
-            : event.clientY;
-
-
-    const x =
-        clientX -
-        rect.left;
-
-
-    const y =
-        clientY -
-        rect.top;
+    const position =
+        getPointerPosition(
+            event
+        );
 
 
     context.globalCompositeOperation =
@@ -554,28 +616,213 @@ function scratch(
 
 
     context.arc(
-        x,
-        y,
+
+        position.x,
+
+        position.y,
+
         32,
+
         0,
+
         Math.PI * 2
+
     );
 
 
     context.fill();
 
+
+    checkScratchProgress();
+
 }
 
 
 
-/* Desktop */
+/*
+    Determine how much of the
+    scratch surface has been removed.
+*/
+
+function checkScratchProgress() {
+
+    if (
+        revealed
+    ) {
+
+        return;
+
+    }
+
+
+    const width =
+        canvas.width;
+
+    const height =
+        canvas.height;
+
+
+    /*
+        Read the alpha channel.
+
+        We sample every 16th pixel
+        for performance.
+    */
+
+    const imageData =
+        context.getImageData(
+            0,
+            0,
+            width,
+            height
+        );
+
+
+    const data =
+        imageData.data;
+
+
+    let transparentPixels =
+        0;
+
+    let sampledPixels =
+        0;
+
+
+    for (
+        let i = 3;
+        i < data.length;
+        i += 64
+    ) {
+
+        sampledPixels++;
+
+
+        if (
+            data[i] < 100
+        ) {
+
+            transparentPixels++;
+
+        }
+
+    }
+
+
+    const percentage =
+        (
+            transparentPixels /
+            sampledPixels
+        ) * 100;
+
+
+    /*
+        Automatically reveal once
+        enough has been scratched.
+    */
+
+    if (
+        percentage >= 45
+    ) {
+
+        revealScratchCard();
+
+    }
+
+}
+
+
+
+/*
+    Completely remove the
+    scratch layer.
+*/
+
+function revealScratchCard() {
+
+    if (
+        revealed
+    ) {
+
+        return;
+
+    }
+
+
+    revealed =
+        true;
+
+
+    scratching =
+        false;
+
+
+    context.clearRect(
+
+        0,
+
+        0,
+
+        canvas.width,
+
+        canvas.height
+
+    );
+
+
+    canvas.style.pointerEvents =
+        "none";
+
+
+    const hint =
+        document.querySelector(
+            ".scratch-hint"
+        );
+
+
+    if (
+        hint
+    ) {
+
+        hint.textContent =
+            "✦ Revealed ✦";
+
+    }
+
+}
+
+
+
+/* =====================================================
+   DESKTOP SCRATCHING
+===================================================== */
 
 canvas.addEventListener(
     "mousedown",
     function () {
 
-        scratching =
-            true;
+        if (
+            !revealed
+        ) {
+
+            scratching =
+                true;
+
+        }
+
+    }
+);
+
+
+canvas.addEventListener(
+    "mousemove",
+    function (
+        event
+    ) {
+
+        scratch(
+            event
+        );
 
     }
 );
@@ -603,21 +850,29 @@ canvas.addEventListener(
 );
 
 
-canvas.addEventListener(
-    "mousemove",
-    scratch
-);
 
-
-
-/* Mobile */
+/* =====================================================
+   MOBILE SCRATCHING
+===================================================== */
 
 canvas.addEventListener(
     "touchstart",
-    function (event) {
+    function (
+        event
+    ) {
+
+        if (
+            revealed
+        ) {
+
+            return;
+
+        }
+
 
         scratching =
             true;
+
 
         scratch(
             event
@@ -632,7 +887,15 @@ canvas.addEventListener(
 
 canvas.addEventListener(
     "touchmove",
-    scratch,
+    function (
+        event
+    ) {
+
+        scratch(
+            event
+        );
+
+    },
     {
         passive: true
     }
@@ -657,12 +920,20 @@ canvas.addEventListener(
 
 const animatedElements =
     document.querySelectorAll(
-        ".verse, .person, .event-card, .venue-card, .count, .gallery-grid img"
+
+        ".verse, " +
+        ".person, " +
+        ".event-card, " +
+        ".venue-card, " +
+        ".count, " +
+        ".gallery-grid img"
+
     );
 
 
 const observer =
     new IntersectionObserver(
+
         function (
             entries
         ) {
@@ -686,10 +957,12 @@ const observer =
             );
 
         },
+
         {
             threshold:
                 0.15
         }
+
     );
 
 
