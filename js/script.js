@@ -1,78 +1,152 @@
 /* =====================================================
+   WEDDING T2 — AQIB & ROMAISA
+===================================================== */
+
+
+/* =====================================================
+   ELEMENTS
+===================================================== */
+
+const cover =
+    document.getElementById("wed2-session-cover");
+
+const invite =
+    document.getElementById("wed2-session-invite");
+
+const envelope =
+    document.getElementById("wed2-envelope");
+
+const tassel =
+    document.getElementById("wed2-tassel");
+
+const seal =
+    document.getElementById("wed2-save-date-btn");
+
+const music =
+    document.getElementById("wed2-music");
+
+const muteButton =
+    document.getElementById("wed2-mute-btn");
+
+
+
+/* =====================================================
    OPEN INVITATION
 ===================================================== */
 
-const openInvitation =
-    document.getElementById("openInvitation");
-
-const cover =
-    document.getElementById("cover");
-
-const invitation =
-    document.getElementById("invitation");
+let invitationOpened = false;
 
 
-openInvitation.addEventListener(
+function openInvitation() {
+
+    if (invitationOpened) {
+        return;
+    }
+
+    invitationOpened = true;
+
+
+    /*
+        Envelope animation
+    */
+
+    envelope.classList.add(
+        "is-opening"
+    );
+
+
+    tassel.classList.add(
+        "is-opening"
+    );
+
+
+    seal.classList.add(
+        "is-falling"
+    );
+
+
+    /*
+        Give the envelope animation
+        time to play before fading.
+    */
+
+    setTimeout(
+        function () {
+
+            cover.classList.add(
+                "is-opened"
+            );
+
+
+            invite.classList.add(
+                "is-visible"
+            );
+
+
+            invite.setAttribute(
+                "aria-hidden",
+                "false"
+            );
+
+
+            startPetals();
+
+
+            music.play()
+                .then(
+                    function () {
+
+                        muteButton.textContent =
+                            "🔊";
+
+                    }
+                )
+                .catch(
+                    function () {
+
+                        /*
+                            Browser autoplay policies
+                            may prevent audio.
+                        */
+
+                    }
+                );
+
+        },
+        850
+    );
+
+}
+
+
+seal.addEventListener(
     "click",
-    function () {
-
-        cover.style.transition =
-            "opacity 1s ease";
-
-        cover.style.opacity =
-            "0";
+    openInvitation
+);
 
 
-        setTimeout(
-            function () {
-
-                cover.style.display =
-                    "none";
-
-                invitation.classList.remove(
-                    "hidden"
-                );
-
-                window.scrollTo(
-                    0,
-                    0
-                );
+tassel.addEventListener(
+    "click",
+    openInvitation
+);
 
 
-                const music =
-                    document.getElementById(
-                        "weddingMusic"
-                    );
+tassel.addEventListener(
+    "keydown",
+    function (
+        event
+    ) {
 
+        if (
+            event.key === "Enter" ||
+            event.key === " "
+        ) {
 
-                music.play()
-                    .then(
-                        function () {
+            event.preventDefault();
 
-                            document
-                                .getElementById(
-                                    "musicButton"
-                                )
-                                .classList.add(
-                                    "playing"
-                                );
+            openInvitation();
 
-                        }
-                    )
-                    .catch(
-                        function () {
-
-                            /*
-                                Browser may block
-                                automatic playback.
-                            */
-
-                        }
-                    );
-
-            },
-            1000
-        );
+        }
 
     }
 );
@@ -83,18 +157,7 @@ openInvitation.addEventListener(
    MUSIC
 ===================================================== */
 
-const music =
-    document.getElementById(
-        "weddingMusic"
-    );
-
-const musicButton =
-    document.getElementById(
-        "musicButton"
-    );
-
-
-musicButton.addEventListener(
+muteButton.addEventListener(
     "click",
     function () {
 
@@ -102,37 +165,17 @@ musicButton.addEventListener(
             music.paused
         ) {
 
-            music.play()
-                .then(
-                    function () {
+            music.play();
 
-                        musicButton
-                            .classList
-                            .add(
-                                "playing"
-                            );
-
-                    }
-                )
-                .catch(
-                    function () {
-
-                        alert(
-                            "Please tap the invitation first to enable music."
-                        );
-
-                    }
-                );
+            muteButton.textContent =
+                "🔊";
 
         } else {
 
             music.pause();
 
-            musicButton
-                .classList
-                .remove(
-                    "playing"
-                );
+            muteButton.textContent =
+                "🔇";
 
         }
 
@@ -142,289 +185,177 @@ musicButton.addEventListener(
 
 
 /* =====================================================
-   COUNTDOWN
+   FALLING PETALS
 ===================================================== */
 
-/*
-    Wedding date:
+function startPetals() {
 
-    22 September 2026
-    2:00 PM
-*/
-
-const weddingDate =
-    new Date(
-        "2026-09-22T14:00:00"
-    ).getTime();
+    const container =
+        document.getElementById(
+            "wed2-petals"
+        );
 
 
-function updateCountdown() {
+    if (!container) {
+        return;
+    }
 
-    const now =
-        new Date().getTime();
 
-
-    const distance =
-        weddingDate -
-        now;
-
+    /*
+        Don't duplicate petals.
+    */
 
     if (
-        distance <= 0
+        container.children.length
     ) {
-
-        document
-            .getElementById(
-                "days"
-            )
-            .textContent =
-            "00";
-
-
-        document
-            .getElementById(
-                "hours"
-            )
-            .textContent =
-            "00";
-
-
-        document
-            .getElementById(
-                "minutes"
-            )
-            .textContent =
-            "00";
-
-
-        document
-            .getElementById(
-                "seconds"
-            )
-            .textContent =
-            "00";
-
 
         return;
 
     }
 
 
-    const days =
-        Math.floor(
-            distance /
-            (
-                1000 *
-                60 *
-                60 *
-                24
-            )
-        );
+    const colors = [
+        "#fde8ec",
+        "#f8d0d8",
+        "#f0b4c0",
+        "#e8a0ad",
+        "#d98595",
+        "#c96b7e",
+        "#b8556a"
+    ];
 
 
-    const hours =
-        Math.floor(
-            (
-                distance %
-                (
-                    1000 *
-                    60 *
-                    60 *
-                    24
+    for (
+        let i = 0;
+        i < 28;
+        i++
+    ) {
+
+        const petal =
+            document.createElement(
+                "span"
+            );
+
+
+        petal.className =
+            "wed2-petal";
+
+
+        const size =
+            8 +
+            Math.random() * 9;
+
+
+        petal.style.left =
+            Math.random() * 100 +
+            "%";
+
+
+        petal.style.width =
+            size + "px";
+
+
+        petal.style.height =
+            size * 1.2 +
+            "px";
+
+
+        petal.style.background =
+            colors[
+                Math.floor(
+                    Math.random() *
+                    colors.length
                 )
-            ) /
-            (
-                1000 *
-                60 *
-                60
-            )
+            ];
+
+
+        petal.style.animationDuration =
+            15 +
+            Math.random() * 18 +
+            "s";
+
+
+        petal.style.animationDelay =
+            -Math.random() * 20 +
+            "s";
+
+
+        container.appendChild(
+            petal
         );
 
-
-    const minutes =
-        Math.floor(
-            (
-                distance %
-                (
-                    1000 *
-                    60 *
-                    60
-                )
-            ) /
-            (
-                1000 *
-                60
-            )
-        );
-
-
-    const seconds =
-        Math.floor(
-            (
-                distance %
-                (
-                    1000 *
-                    60
-                )
-            ) /
-            1000
-        );
-
-
-    document
-        .getElementById(
-            "days"
-        )
-        .textContent =
-        String(
-            days
-        ).padStart(
-            2,
-            "0"
-        );
-
-
-    document
-        .getElementById(
-            "hours"
-        )
-        .textContent =
-        String(
-            hours
-        ).padStart(
-            2,
-            "0"
-        );
-
-
-    document
-        .getElementById(
-            "minutes"
-        )
-        .textContent =
-        String(
-            minutes
-        ).padStart(
-            2,
-            "0"
-        );
-
-
-    document
-        .getElementById(
-            "seconds"
-        )
-        .textContent =
-        String(
-            seconds
-        ).padStart(
-            2,
-            "0"
-        );
+    }
 
 }
 
 
-updateCountdown();
-
-
-setInterval(
-    updateCountdown,
-    1000
-);
-
-
 
 /* =====================================================
-   SCRATCH & REVEAL
+   SCRATCH CARD
 ===================================================== */
 
-const canvas =
+const scratchCanvas =
     document.getElementById(
-        "scratchCanvas"
+        "wed2-scratch-canvas"
     );
 
-const context =
-    canvas.getContext(
+
+const scratchContext =
+    scratchCanvas.getContext(
         "2d"
     );
 
-const scratchCard =
-    document.getElementById(
-        "scratchCard"
-    );
 
-
-let scratching =
+let isScratching =
     false;
 
-let revealed =
+let scratchRevealed =
     false;
 
 
-
-/*
-    Create the scratch surface.
-*/
 
 function setupScratchCard() {
 
     const rect =
-        scratchCard.getBoundingClientRect();
+        scratchCanvas.getBoundingClientRect();
 
 
-    const scale =
+    const ratio =
         window.devicePixelRatio ||
         1;
 
 
-    canvas.width =
-        Math.round(
-            rect.width *
-            scale
-        );
+    scratchCanvas.width =
+        rect.width * ratio;
 
 
-    canvas.height =
-        Math.round(
-            rect.height *
-            scale
-        );
+    scratchCanvas.height =
+        rect.height * ratio;
 
 
-    canvas.style.width =
-        rect.width +
-        "px";
-
-
-    canvas.style.height =
-        rect.height +
-        "px";
-
-
-    context.setTransform(
-        scale,
+    scratchContext.setTransform(
+        ratio,
         0,
         0,
-        scale,
+        ratio,
         0,
         0
     );
 
 
-    context.globalCompositeOperation =
+    /*
+        Scratch layer
+    */
+
+    scratchContext.globalCompositeOperation =
         "source-over";
 
 
-    /*
-        Main scratch surface
-    */
-
-    context.fillStyle =
-        "#b8914c";
+    scratchContext.fillStyle =
+        "#b88a3b";
 
 
-    context.fillRect(
+    scratchContext.fillRect(
         0,
         0,
         rect.width,
@@ -433,23 +364,23 @@ function setupScratchCard() {
 
 
     /*
-        Decorative texture
+        Metallic texture
     */
 
-    context.fillStyle =
+    scratchContext.fillStyle =
         "rgba(255,255,255,.12)";
 
 
     for (
         let i = 0;
-        i < 350;
+        i < 500;
         i++
     ) {
 
-        context.beginPath();
+        scratchContext.beginPath();
 
 
-        context.arc(
+        scratchContext.arc(
 
             Math.random() *
                 rect.width,
@@ -465,32 +396,32 @@ function setupScratchCard() {
         );
 
 
-        context.fill();
+        scratchContext.fill();
 
     }
 
 
     /*
-        Scratch instruction
+        Text on scratch layer
     */
 
-    context.fillStyle =
-        "#fffaf2";
+    scratchContext.fillStyle =
+        "#fff8ec";
 
 
-    context.font =
-        "600 13px Montserrat";
-
-
-    context.textAlign =
+    scratchContext.textAlign =
         "center";
 
 
-    context.textBaseline =
+    scratchContext.textBaseline =
         "middle";
 
 
-    context.fillText(
+    scratchContext.font =
+        "600 13px Nunito";
+
+
+    scratchContext.fillText(
 
         "SCRATCH TO REVEAL",
 
@@ -506,18 +437,12 @@ function setupScratchCard() {
 setupScratchCard();
 
 
-
-/*
-    Recreate the scratch surface
-    if screen size changes.
-*/
-
 window.addEventListener(
     "resize",
     function () {
 
         if (
-            !revealed
+            !scratchRevealed
         ) {
 
             setupScratchCard();
@@ -530,25 +455,24 @@ window.addEventListener(
 
 
 /*
-    Get pointer position.
+   Pointer coordinates
 */
 
-function getPointerPosition(
+function pointerPosition(
     event
 ) {
 
     const rect =
-        canvas.getBoundingClientRect();
+        scratchCanvas.getBoundingClientRect();
 
 
     let clientX;
-
     let clientY;
 
 
     if (
         event.touches &&
-        event.touches.length > 0
+        event.touches.length
     ) {
 
         clientX =
@@ -585,7 +509,7 @@ function getPointerPosition(
 
 
 /*
-    Scratch the surface.
+   Scratch
 */
 
 function scratch(
@@ -593,8 +517,8 @@ function scratch(
 ) {
 
     if (
-        !scratching ||
-        revealed
+        !isScratching ||
+        scratchRevealed
     ) {
 
         return;
@@ -603,91 +527,67 @@ function scratch(
 
 
     const position =
-        getPointerPosition(
+        pointerPosition(
             event
         );
 
 
-    context.globalCompositeOperation =
+    scratchContext.globalCompositeOperation =
         "destination-out";
 
 
-    context.beginPath();
+    scratchContext.beginPath();
 
 
-    context.arc(
+    scratchContext.arc(
 
         position.x,
 
         position.y,
 
-        32,
+        27,
 
         0,
-
         Math.PI * 2
 
     );
 
 
-    context.fill();
+    scratchContext.fill();
 
 
-    checkScratchProgress();
+    checkScratchAmount();
 
 }
 
 
 
 /*
-    Determine how much of the
-    scratch surface has been removed.
+   Check transparency
 */
 
-function checkScratchProgress() {
+function checkScratchAmount() {
 
-    if (
-        revealed
-    ) {
+    const data =
+        scratchContext.getImageData(
+            0,
+            0,
+            scratchCanvas.width,
+            scratchCanvas.height
+        ).data;
 
-        return;
 
-    }
+    let transparent =
+        0;
 
-
-    const width =
-        canvas.width;
-
-    const height =
-        canvas.height;
+    let sampled =
+        0;
 
 
     /*
-        Read the alpha channel.
-
-        We sample every 16th pixel
-        for performance.
+        Sample pixels instead of checking
+        every single pixel.
     */
-
-    const imageData =
-        context.getImageData(
-            0,
-            0,
-            width,
-            height
-        );
-
-
-    const data =
-        imageData.data;
-
-
-    let transparentPixels =
-        0;
-
-    let sampledPixels =
-        0;
-
 
     for (
         let i = 3;
@@ -695,14 +595,14 @@ function checkScratchProgress() {
         i += 64
     ) {
 
-        sampledPixels++;
+        sampled++;
 
 
         if (
-            data[i] < 100
+            data[i] < 80
         ) {
 
-            transparentPixels++;
+            transparent++;
 
         }
 
@@ -710,22 +610,21 @@ function checkScratchProgress() {
 
 
     const percentage =
-        (
-            transparentPixels /
-            sampledPixels
-        ) * 100;
+        transparent /
+        sampled *
+        100;
 
 
     /*
-        Automatically reveal once
-        enough has been scratched.
+        Reveal when approximately
+        45% has been scratched.
     */
 
     if (
         percentage >= 45
     ) {
 
-        revealScratchCard();
+        revealDate();
 
     }
 
@@ -734,14 +633,13 @@ function checkScratchProgress() {
 
 
 /*
-    Completely remove the
-    scratch layer.
+   Reveal date
 */
 
-function revealScratchCard() {
+function revealDate() {
 
     if (
-        revealed
+        scratchRevealed
     ) {
 
         return;
@@ -749,43 +647,36 @@ function revealScratchCard() {
     }
 
 
-    revealed =
+    scratchRevealed =
         true;
 
 
-    scratching =
+    isScratching =
         false;
 
 
-    context.clearRect(
-
+    scratchContext.clearRect(
         0,
-
         0,
-
-        canvas.width,
-
-        canvas.height
-
+        scratchCanvas.width,
+        scratchCanvas.height
     );
 
 
-    canvas.style.pointerEvents =
+    scratchCanvas.style.pointerEvents =
         "none";
 
 
     const hint =
         document.querySelector(
-            ".scratch-hint"
+            ".wed2-scratch-hint"
         );
 
 
-    if (
-        hint
-    ) {
+    if (hint) {
 
         hint.textContent =
-            "✦ Revealed ✦";
+            "✦ 22 September 2026 ✦";
 
     }
 
@@ -794,27 +685,21 @@ function revealScratchCard() {
 
 
 /* =====================================================
-   DESKTOP SCRATCHING
+   DESKTOP SCRATCH
 ===================================================== */
 
-canvas.addEventListener(
+scratchCanvas.addEventListener(
     "mousedown",
     function () {
 
-        if (
-            !revealed
-        ) {
-
-            scratching =
-                true;
-
-        }
+        isScratching =
+            true;
 
     }
 );
 
 
-canvas.addEventListener(
+scratchCanvas.addEventListener(
     "mousemove",
     function (
         event
@@ -828,22 +713,11 @@ canvas.addEventListener(
 );
 
 
-canvas.addEventListener(
+window.addEventListener(
     "mouseup",
     function () {
 
-        scratching =
-            false;
-
-    }
-);
-
-
-canvas.addEventListener(
-    "mouseleave",
-    function () {
-
-        scratching =
+        isScratching =
             false;
 
     }
@@ -852,25 +726,16 @@ canvas.addEventListener(
 
 
 /* =====================================================
-   MOBILE SCRATCHING
+   MOBILE SCRATCH
 ===================================================== */
 
-canvas.addEventListener(
+scratchCanvas.addEventListener(
     "touchstart",
     function (
         event
     ) {
 
-        if (
-            revealed
-        ) {
-
-            return;
-
-        }
-
-
-        scratching =
+        isScratching =
             true;
 
 
@@ -885,7 +750,7 @@ canvas.addEventListener(
 );
 
 
-canvas.addEventListener(
+scratchCanvas.addEventListener(
     "touchmove",
     function (
         event
@@ -902,11 +767,11 @@ canvas.addEventListener(
 );
 
 
-canvas.addEventListener(
+scratchCanvas.addEventListener(
     "touchend",
     function () {
 
-        scratching =
+        isScratching =
             false;
 
     }
@@ -915,65 +780,170 @@ canvas.addEventListener(
 
 
 /* =====================================================
-   SCROLL REVEAL
+   COUNTDOWN
 ===================================================== */
 
-const animatedElements =
-    document.querySelectorAll(
-
-        ".verse, " +
-        ".person, " +
-        ".event-card, " +
-        ".venue-card, " +
-        ".count, " +
-        ".gallery-grid img"
-
-    );
+const weddingDate =
+    new Date(
+        "2026-09-22T14:00:00"
+    ).getTime();
 
 
-const observer =
-    new IntersectionObserver(
+function updateCountdown() {
 
-        function (
-            entries
-        ) {
-
-            entries.forEach(
-                function (
-                    entry
-                ) {
-
-                    if (
-                        entry.isIntersecting
-                    ) {
-
-                        entry.target.classList.add(
-                            "visible"
-                        );
-
-                    }
-
-                }
-            );
-
-        },
-
-        {
-            threshold:
-                0.15
-        }
-
-    );
+    const now =
+        Date.now();
 
 
-animatedElements.forEach(
-    function (
-        element
+    const difference =
+        weddingDate -
+        now;
+
+
+    if (
+        difference <= 0
     ) {
 
-        observer.observe(
-            element
+        setCounter(
+            "wed2-days",
+            0
         );
 
+        setCounter(
+            "wed2-hours",
+            0
+        );
+
+        setCounter(
+            "wed2-minutes",
+            0
+        );
+
+        setCounter(
+            "wed2-seconds",
+            0
+        );
+
+        return;
+
     }
+
+
+    const days =
+        Math.floor(
+            difference /
+            (
+                1000 *
+                60 *
+                60 *
+                24
+            )
+        );
+
+
+    const hours =
+        Math.floor(
+            (
+                difference %
+                (
+                    1000 *
+                    60 *
+                    60 *
+                    24
+                )
+            ) /
+            (
+                1000 *
+                60 *
+                60
+            )
+        );
+
+
+    const minutes =
+        Math.floor(
+            (
+                difference %
+                (
+                    1000 *
+                    60 *
+                    60
+                )
+            ) /
+            (
+                1000 *
+                60
+            )
+        );
+
+
+    const seconds =
+        Math.floor(
+            (
+                difference %
+                (
+                    1000 *
+                    60
+                )
+            ) /
+            1000
+        );
+
+
+    setCounter(
+        "wed2-days",
+        days
+    );
+
+    setCounter(
+        "wed2-hours",
+        hours
+    );
+
+    setCounter(
+        "wed2-minutes",
+        minutes
+    );
+
+    setCounter(
+        "wed2-seconds",
+        seconds
+    );
+
+}
+
+
+function setCounter(
+    id,
+    value
+) {
+
+    const element =
+        document.getElementById(
+            id
+        );
+
+
+    if (!element) {
+        return;
+    }
+
+
+    element.textContent =
+        String(
+            value
+        ).padStart(
+            2,
+            "0"
+        );
+
+}
+
+
+updateCountdown();
+
+
+setInterval(
+    updateCountdown,
+    1000
 );
