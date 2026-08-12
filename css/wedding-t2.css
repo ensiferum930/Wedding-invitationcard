@@ -3349,3 +3349,23 @@ body[data-opening-loader="true"] .wed2-opening-loader-hint {
     animation: none;
   }
 }
+
+
+/* Final typography correction — match the original T2 reference typography. */
+body.wed2-use-great-vibes .wed2-ring-name,
+body.wed2-use-great-vibes .wed2-details-name {
+  font-family: 'Great Vibes', cursive !important;
+  font-style: normal;
+  font-weight: 400;
+}
+
+.wed2-closing-ums {
+  display: inline-block;
+  margin-top: 0.18rem;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: lowercase;
+  opacity: 0.9;
+}
