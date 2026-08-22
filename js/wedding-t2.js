@@ -2082,7 +2082,7 @@
 
     function checkReveal() {
       if (revealed) return;
-      if (getClearedPercent() >= 0.30) {
+      if (getClearedPercent() >= 0.25) {
         revealed = true;
         card.classList.add('is-revealed');
         if (scratchSection) scratchSection.classList.add('is-splashed');
@@ -2250,7 +2250,7 @@
 
     function checkReveal() {
       if (revealed) return;
-      if (getClearedPercent() >= 0.30) {
+      if (getClearedPercent() >= 0.25) {
         revealed = true;
         scratchCard.classList.add('is-revealed');
         if (scratchSection) scratchSection.classList.add('is-splashed');
